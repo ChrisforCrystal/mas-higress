@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    higress.io/comment: PLEASE DO NOT EDIT DIRECTLY. This resource is managed by Higress.
+    higress.io/destination: llm-minmax.internal.dns:443
+    higress.io/exact-match-header-x-selected-provider: qianwen
+    higress.io/ignore-path-case: "true"
+  creationTimestamp: null
+  labels:
+    higress.io/domain_higress-default-domain: "true"
+    higress.io/internal: "true"
+    higress.io/resource-definer: higress
+  managedFields:
+  - apiVersion: networking.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:higress.io/comment: {}
+          f:higress.io/destination: {}
+          f:higress.io/exact-match-header-x-selected-provider: {}
+          f:higress.io/ignore-path-case: {}
+        f:labels:
+          .: {}
+          f:higress.io/domain_higress-default-domain: {}
+          f:higress.io/internal: {}
+          f:higress.io/resource-definer: {}
+      f:spec:
+        f:ingressClassName: {}
+        f:rules: {}
+    manager: Kubernetes Java Client
+    operation: Update
+    time: "2026-02-13T11:05:06Z"
+  name: ai-route-mas-minimax.internal
+  namespace: higress-system
+  resourceVersion: "3"
+spec:
+  ingressClassName: higress
+  rules:
+  - http:
+      paths:
+      - backend:
+          resource:
+            apiGroup: networking.higress.io
+            kind: McpBridge
+            name: default
+        path: /masgod/minmax
+        pathType: Prefix
+status:
+  loadBalancer: {}

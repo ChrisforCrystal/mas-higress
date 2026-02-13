@@ -48,10 +48,10 @@ metadata:
         f:url: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-13T09:48:17Z"
+    time: "2026-02-13T10:50:22Z"
   name: key-auth.internal
   namespace: higress-system
-  resourceVersion: "9"
+  resourceVersion: "14"
 spec:
   defaultConfig:
     allow: []
@@ -62,6 +62,16 @@ spec:
   defaultConfigDisable: false
   failStrategy: FAIL_OPEN
   matchRules:
+  - config:
+      allow: []
+    configDisable: true
+    ingress:
+    - ai-route-mas-minimax.internal
+  - config:
+      allow: []
+    configDisable: true
+    ingress:
+    - ai-route-mas-qianwen.internal
   - config:
       allow: []
     configDisable: true

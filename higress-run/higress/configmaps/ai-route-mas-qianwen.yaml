@@ -1,0 +1,27 @@
+apiVersion: v1
+data:
+  data: '{"name":"mas-qianwen","domains":[],"pathPredicate":{"matchType":"PRE","matchValue":"/masgod/qianwen","caseSensitive":false},"headerPredicates":[{"key":"x-selected-provider","matchType":"EQUAL","matchValue":"qianwen","caseSensitive":true}],"urlParamPredicates":[],"upstreams":[{"provider":"qianwen","weight":100,"modelMapping":{}}],"modelPredicates":[],"authConfig":{"enabled":false,"allowedConsumers":[]},"fallbackConfig":{"enabled":false}}'
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    higress.io/config-map-type: ai-route
+    higress.io/resource-definer: higress
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:data: {}
+      f:metadata:
+        f:labels:
+          .: {}
+          f:higress.io/config-map-type: {}
+          f:higress.io/resource-definer: {}
+    manager: Kubernetes Java Client
+    operation: Update
+    time: "2026-02-13T11:00:51Z"
+  name: ai-route-mas-qianwen
+  namespace: higress-system
+  resourceVersion: "2"

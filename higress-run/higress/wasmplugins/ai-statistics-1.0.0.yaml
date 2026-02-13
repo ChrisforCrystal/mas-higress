@@ -38,14 +38,50 @@ metadata:
         f:url: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-13T09:48:17Z"
+    time: "2026-02-13T10:50:22Z"
   name: ai-statistics-1.0.0
   namespace: higress-system
-  resourceVersion: "7"
+  resourceVersion: "9"
 spec:
   defaultConfigDisable: true
   failStrategy: FAIL_OPEN
   matchRules:
+  - config:
+      attributes:
+      - apply_to_log: true
+        key: question
+        value: messages.@reverse.0.content
+        value_source: request_body
+      - apply_to_log: true
+        key: answer
+        rule: append
+        value: choices.0.delta.content
+        value_source: response_streaming_body
+      - apply_to_log: true
+        key: answer
+        value: choices.0.message.content
+        value_source: response_body
+    configDisable: false
+    ingress:
+    - ai-route-mas-minimax.internal
+  - config:
+      attributes:
+      - apply_to_log: true
+        key: question
+        value: messages.@reverse.0.content
+        value_source: request_body
+      - apply_to_log: true
+        key: answer
+        rule: append
+        value: choices.0.delta.content
+        value_source: response_streaming_body
+      - apply_to_log: true
+        key: answer
+        value: choices.0.message.content
+        value_source: response_body
+    configDisable: false
+    ingress:
+    - ai-route-mas-qianwen.internal
   - config:
       attributes:
       - apply_to_log: true

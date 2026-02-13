@@ -47,7 +47,6 @@ func parseConfig(json gjson.Result, config *AILoadBalancerConfig, log wrapper.Lo
 		Port:        6379,
 	})
 	_ = config.RedisClient.Init(json.Get("redis.username").String(), json.Get("redis.password").String(), json.Get("redis.timeout").Int())
-	
 	config.RedisKey = json.Get("redis_key_prefix").String()
 	config.TargetHeader = json.Get("target_header").String()
 	if config.TargetHeader == "" { config.TargetHeader = "x-selected-provider" }
@@ -79,10 +78,14 @@ func onHttpRequestHeaders(ctx wrapper.HttpContext, config AILoadBalancerConfig, 
 	_ = config.RedisClient.MGet(keys, func(status int, response resp.Value) {
 		bestProvider := selectBestProvider(config.Providers, response)
 		if bestProvider != nil {
-			// 1. 设置 Header 触发 Ingress 路由选择
+			// 1. 设置 Header 触发路由
 			proxywasm.ReplaceHttpRequestHeader(config.TargetHeader, bestProvider.Name)
 			// 2. 染色用于 Body 改写
 			proxywasm.ReplaceHttpRequestHeader(RewriteModelHeader, bestProvider.Model)
+			
+			// 【关键修复】：强制 Envoy 重新计算路由。
+			// 只有调用了这一步，Envoy 才会根据刚才设置的 Header 去匹配你新建的那两个专用路由。
+			proxywasm.SetProperty([]string{"clear_route_cache"}, []byte("1"))
 		}
 		proxywasm.ResumeHttpRequest()
 	})
