@@ -10,10 +10,10 @@ metadata:
         f:registries: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-12T12:11:30Z"
+    time: "2026-02-13T07:14:18Z"
   name: default
   namespace: higress-system
-  resourceVersion: "4"
+  resourceVersion: "5"
 spec:
   registries:
   - domain: 127.0.0.1:8001
@@ -113,5 +113,10 @@ spec:
   - domain: host.docker.internal
     name: redis-svc
     port: 6379
+    type: dns
+  - domain: api.minimax.chat
+    name: llm-minmax.internal
+    port: 443
+    protocol: https
     type: dns
 status: {}

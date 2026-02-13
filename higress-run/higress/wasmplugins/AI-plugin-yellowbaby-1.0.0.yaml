@@ -1,0 +1,63 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  annotations:
+    higress.io/wasm-plugin-description: 可以进行metric操作
+    higress.io/wasm-plugin-title: AI-plugin-yellowbaby
+  creationTimestamp: "2026-02-13T07:12:22Z"
+  labels:
+    higress.io/resource-definer: higress
+    higress.io/wasm-plugin-built-in: "false"
+    higress.io/wasm-plugin-category: custom
+    higress.io/wasm-plugin-name: AI-plugin-yellowbaby
+    higress.io/wasm-plugin-version: 1.0.0
+  managedFields:
+  - apiVersion: extensions.higress.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:higress.io/wasm-plugin-description: {}
+          f:higress.io/wasm-plugin-title: {}
+        f:labels:
+          .: {}
+          f:higress.io/resource-definer: {}
+          f:higress.io/wasm-plugin-built-in: {}
+          f:higress.io/wasm-plugin-category: {}
+          f:higress.io/wasm-plugin-name: {}
+          f:higress.io/wasm-plugin-version: {}
+      f:spec:
+        f:defaultConfigDisable: {}
+        f:failStrategy: {}
+        f:matchRules: {}
+        f:priority: {}
+        f:url: {}
+    manager: Kubernetes Java Client
+    operation: Update
+    time: "2026-02-13T07:16:45Z"
+  name: AI-plugin-yellowbaby-1.0.0
+  namespace: higress-system
+  resourceVersion: "3"
+spec:
+  defaultConfigDisable: true
+  failStrategy: FAIL_OPEN
+  matchRules:
+  - config:
+      providers:
+      - key: minimax_1
+        name: minimax-gpu-1
+      - key: qwen_1
+        name: qwen-gpu-1
+      redis:
+        service_name: redis-svc
+        service_port: 6379
+        timeout: 2000
+      redis_key_prefix: 'ai_metric:'
+      target_header: x-selected-provider
+    configDisable: false
+    ingress:
+    - ai-route-masgod.internal
+  priority: 1000
+  url: file:///data/wasmplugins/ai-load-balancer-go.wasm
+status: {}
