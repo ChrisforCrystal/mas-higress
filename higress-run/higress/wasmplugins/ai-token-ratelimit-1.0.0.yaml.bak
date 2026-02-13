@@ -1,0 +1,83 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  annotations:
+    higress.io/wasm-plugin-description: Implement token rate limiting based on specific
+      keys, where the key source can be URL parameters, HTTP request headers, client
+      IP addresses, etc.
+    higress.io/wasm-plugin-icon: https://img.alicdn.com/imgextra/i1/O1CN018iKKih1iVx287RltL_!!6000000004419-2-tps-42-42.png
+    higress.io/wasm-plugin-title: AI Token Rate Limit
+  creationTimestamp: "2026-02-12T11:39:36Z"
+  labels:
+    higress.io/resource-definer: higress
+    higress.io/wasm-plugin-built-in: "true"
+    higress.io/wasm-plugin-category: ai
+    higress.io/wasm-plugin-name: ai-token-ratelimit
+    higress.io/wasm-plugin-version: 1.0.0
+  managedFields:
+  - apiVersion: extensions.higress.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:higress.io/wasm-plugin-description: {}
+          f:higress.io/wasm-plugin-icon: {}
+          f:higress.io/wasm-plugin-title: {}
+        f:labels:
+          .: {}
+          f:higress.io/resource-definer: {}
+          f:higress.io/wasm-plugin-built-in: {}
+          f:higress.io/wasm-plugin-category: {}
+          f:higress.io/wasm-plugin-name: {}
+          f:higress.io/wasm-plugin-version: {}
+      f:spec:
+        f:defaultConfig:
+          .: {}
+          f:redis:
+            .: {}
+            f:service_name: {}
+            f:service_port: {}
+          f:rule_items: {}
+          f:rule_name: {}
+        f:defaultConfigDisable: {}
+        f:failStrategy: {}
+        f:matchRules: {}
+        f:priority: {}
+        f:url: {}
+    manager: Kubernetes Java Client
+    operation: Update
+    time: "2026-02-12T12:15:56Z"
+  name: ai-token-ratelimit-1.0.0
+  namespace: higress-system
+  resourceVersion: "10"
+spec:
+  defaultConfig:
+    redis:
+      service_name: redis-svc.dns
+      service_port: 6379
+    rule_items:
+    - limit_by_header: x-user-id
+      limit_keys:
+      - key: user-123
+        token_per_minute: 50
+    rule_name: default_rule
+  defaultConfigDisable: false
+  failStrategy: FAIL_OPEN
+  matchRules:
+  - config:
+      redis:
+        service_name: redis-svc.dns
+        service_port: 6379
+      rule_items:
+      - limit_by_header: x-user-id
+        limit_keys:
+        - key: user-123
+          token_per_minute: 50
+      rule_name: default_rule
+    configDisable: false
+    ingress:
+    - ai-route-minimax.internal
+  priority: 800
+  url: oci://higress-registry.cn-hangzhou.cr.aliyuncs.com/plugins/ai-token-ratelimit:2.0.0
+status: {}

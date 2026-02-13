@@ -1,0 +1,20 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: ai-load-balancer
+  namespace: higress-system
+spec:
+  priority: 200
+  url: file:///data/wasmplugins/ai-load-balancer-go.wasm
+  defaultConfig:
+    redis:
+      service_name: "redis-svc.dns"
+      service_port: 6379
+      timeout: 2000
+    redis_key_prefix: "ai_metric:"
+    target_header: "x-higress-llm-model" # Or whatever header AI Proxy uses to route
+    providers:
+      - name: "minimax-gpu-1"
+        key: "minimax_1"
+      - name: "qwen-gpu-1"
+        key: "qwen_1"

@@ -1,0 +1,37 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: ai-cache
+  namespace: higress-system
+  labels:
+    higress.io/wasm-plugin-name: ai-cache
+    higress.io/wasm-plugin-version: 1.0.0
+spec:
+  priority: 200
+  url: oci://higress-registry.cn-hangzhou.cr.aliyuncs.com/plugins/ai-cache:1.0.0
+  defaultConfig:
+    cache:
+      type: redis
+      serviceName: "host.docker.internal"
+      servicePort: 6379
+      timeout: 2000
+    vector:
+      type: "qdrant"
+      qdrant:
+        host: "host.docker.internal"
+        port: 6333
+        collection: "default"
+    embedding:
+      type: "dashscope"
+      apiKey: "sk-216ef44f260a494dae79fdd3f4b6c9f9"
+      serviceName: "llm-aliyun.internal.dns"
+      servicePort: 443
+      model: "text-embedding-v3"
+    cacheKeyFrom: "messages.@reverse.0.content"
+    cacheValueFrom: "choices.0.message.content"
+    cacheStreamValueFrom: "choices.0.delta.content"
+    responseTemplate: |
+      {"id":"from-cache","choices":[{"index":0,"message":{"role":"assistant","content":"%s"},"finish_reason":"stop"}],"model":"gpt-4o","object":"chat.completion","usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}
+    streamResponseTemplate: |
+      data:{"id":"from-cache","choices":[{"index":0,"delta":{"role":"assistant","content":"%s"},"finish_reason":"stop"}],"model":"gpt-4o","object":"chat.completion","usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}
+      data:[DONE]

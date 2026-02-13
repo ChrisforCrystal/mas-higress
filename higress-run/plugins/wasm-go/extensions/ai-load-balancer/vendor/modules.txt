@@ -1,0 +1,9 @@
+# github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20240711023527-ba358c48772f
+## explicit; go 1.19
+github.com/higress-group/proxy-wasm-go-sdk/proxywasm
+github.com/higress-group/proxy-wasm-go-sdk/proxywasm/internal
+github.com/higress-group/proxy-wasm-go-sdk/proxywasm/internal/proxy_wasm_version/0_2_100/abi
+github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types
+# github.com/stretchr/testify v1.9.0
+## explicit; go 1.17
+# github.com/higress-group/nottinygc => github.com/wasilibs/nottinygc v0.4.0

@@ -1,0 +1,79 @@
+apiVersion: extensions.higress.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  annotations:
+    higress.io/wasm-plugin-description: 缓存大语言模型的响应结果，显著降低相似问题的响应时延并节省成本。
+    higress.io/wasm-plugin-icon: https://img.alicdn.com/imgextra/i1/O1CN018iKKih1iVx287RltL_!!6000000004419-2-tps-42-42.png
+    higress.io/wasm-plugin-title: AI 缓存
+  creationTimestamp: "2026-02-11T07:34:49Z"
+  labels:
+    higress.io/resource-definer: higress
+    higress.io/wasm-plugin-built-in: "true"
+    higress.io/wasm-plugin-category: ai
+    higress.io/wasm-plugin-name: ai-cache
+    higress.io/wasm-plugin-version: 1.0.0
+  managedFields:
+  - apiVersion: extensions.higress.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:higress.io/wasm-plugin-description: {}
+          f:higress.io/wasm-plugin-icon: {}
+          f:higress.io/wasm-plugin-title: {}
+        f:labels:
+          .: {}
+          f:higress.io/resource-definer: {}
+          f:higress.io/wasm-plugin-built-in: {}
+          f:higress.io/wasm-plugin-category: {}
+          f:higress.io/wasm-plugin-name: {}
+          f:higress.io/wasm-plugin-version: {}
+      f:spec:
+        f:defaultConfigDisable: {}
+        f:failStrategy: {}
+        f:matchRules: {}
+        f:priority: {}
+        f:url: {}
+    manager: Kubernetes Java Client
+    operation: Update
+    time: "2026-02-12T11:20:17Z"
+  name: ai-cache-1.0.0
+  namespace: higress-system
+  resourceVersion: "6"
+spec:
+  defaultConfigDisable: true
+  failStrategy: FAIL_OPEN
+  matchRules:
+  - config:
+      cacheKeyFrom: messages.@reverse.0.content
+      cacheStreamValueFrom: choices.0.delta.content
+      cacheValueFrom: choices.0.message.content
+      embedding:
+        apiKey: sk-216ef44f260a494dae79fdd3f4b6c9f9
+        apiProvider: dashscope
+        domain: dashscope.aliyuncs.com
+        model: qwen3-vl-embedding
+        serviceName: llm-aliyun.internal.dns
+        servicePort: 443
+      redis:
+        serviceName: host.docker.internal
+        servicePort: 6379
+        timeout: 2000
+      returnResponseTemplate: |
+        {"id":"from-cache","choices":[{"index":0,"message":{"role":"assistant","content":"%s"},"finish_reason":"stop"}],"model":"gpt-4o","object":"chat.completion","usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}
+      returnStreamResponseTemplate: |
+        data:{"id":"from-cache","choices":[{"index":0,"delta":{"role":"assistant","content":"%s"},"finish_reason":"stop"}],"model":"gpt-4o","object":"chat.completion","usage":{"prompt_tokens":0,"completion_tokens":0,"total_tokens":0}}
+        data:[DONE]
+      vector:
+        qdrant:
+          collection: default
+          host: host.docker.internal
+          port: 6333
+        type: qdrant
+    configDisable: true
+    ingress:
+    - ai-route-minimax.internal
+  priority: 800
+  url: oci://higress-registry.cn-hangzhou.cr.aliyuncs.com/plugins/ai-cache:2.0.0
+status: {}

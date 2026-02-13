@@ -1,0 +1,151 @@
+package main
+
+import (
+	"math/rand"
+	"strconv"
+
+	"github.com/alibaba/higress/plugins/wasm-go/pkg/wrapper"
+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm"
+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/resp"
+)
+
+func main() {
+	wrapper.SetCtx(
+		"ai-load-balancer",
+		wrapper.ParseConfigBy(parseConfig),
+		wrapper.ProcessRequestHeadersBy(onHttpRequestHeaders),
+	)
+}
+
+type AILoadBalancerConfig struct {
+	// Use DnsCluster for redis-svc.dns
+	RedisClient *wrapper.RedisClusterClient[wrapper.DnsCluster]
+	Providers   []ProviderConfig
+	RedisKey    string
+	HeaderKey   string
+}
+
+type ProviderConfig struct {
+	Name      string
+	MetricKey string
+}
+
+func parseConfig(json gjson.Result, config *AILoadBalancerConfig, log wrapper.Log) error {
+	serviceName := json.Get("redis.service_name").String()
+	servicePort := json.Get("redis.service_port").Int()
+	username := json.Get("redis.username").String()
+	password := json.Get("redis.password").String()
+	timeout := json.Get("redis.timeout").Int()
+
+	// Use wrapper.DnsCluster structure matches the SDK
+	config.RedisClient = wrapper.NewRedisClusterClient(wrapper.DnsCluster{
+		ServiceName: serviceName,
+		Port:        servicePort,
+		Domain:      serviceName, // Assuming service_name is the domain like "redis-svc.dns"
+	})
+	
+	_ = config.RedisClient.Init(username, password, timeout)
+
+	config.RedisKey = json.Get("redis_key_prefix").String()
+	if config.RedisKey == "" {
+		config.RedisKey = "ai_metric:"
+	}
+	
+	config.HeaderKey = json.Get("target_header").String()
+	if config.HeaderKey == "" {
+		config.HeaderKey = "x-selected-provider"
+	}
+
+	providers := json.Get("providers").Array()
+	for _, p := range providers {
+		config.Providers = append(config.Providers, ProviderConfig{
+			Name:      p.Get("name").String(),
+			MetricKey: p.Get("key").String(),
+		})
+	}
+
+	return nil
+}
+
+func onHttpRequestHeaders(ctx wrapper.HttpContext, config AILoadBalancerConfig, log wrapper.Log) types.Action {
+	if len(config.Providers) == 0 {
+		return types.ActionContinue
+	}
+
+	keys := make([]string, len(config.Providers))
+	for i, p := range config.Providers {
+		keys[i] = config.RedisKey + p.MetricKey
+	}
+
+	// Correct callback signature: func(response resp.Value)
+	err := config.RedisClient.MGet(keys, func(response resp.Value) {
+		if response.Error() != nil {
+			log.Errorf("Redis MGET failed: %v", response.Error())
+			proxywasm.ResumeHttpRequest()
+			return
+		}
+
+		// resp.Value is an array for MGET
+		if response.Type() != resp.Array {
+			log.Errorf("Redis MGET returned non-array type: %s", response.Type())
+			proxywasm.ResumeHttpRequest()
+			return
+		}
+		
+		bestProvider := selectBestProvider(config.Providers, response.Array(), log)
+		
+		if bestProvider != "" {
+			log.Infof("AI Load Balancer selected: %s", bestProvider)
+			proxywasm.ReplaceHttpRequestHeader(config.HeaderKey, bestProvider)
+		}
+
+		proxywasm.ResumeHttpRequest()
+	})
+
+	if err != nil {
+		log.Errorf("Redis call failed: %v", err)
+		return types.ActionContinue
+	}
+
+	return types.ActionPause
+}
+
+// selectBestProvider accepts []resp.Value from tidwall/resp
+func selectBestProvider(providers []ProviderConfig, values []resp.Value, log wrapper.Log) string {
+	bestIdx := -1
+	minUtil := 101
+
+	for i, val := range values {
+		// MGET items can be Null
+		if val.IsNull() {
+			log.Warnf("Metric missing for %s", providers[i].Name)
+			continue
+		}
+		
+		// Value should be integer string
+		s := val.String()
+		util, err := strconv.Atoi(s)
+		if err != nil {
+			log.Warnf("Invalid metric for %s: %v", providers[i].Name, s)
+			continue
+		}
+
+		if util < minUtil {
+			minUtil = util
+			bestIdx = i
+		}
+	}
+
+	if bestIdx != -1 {
+		return providers[bestIdx].Name
+	}
+	
+	if len(providers) > 0 {
+		log.Warnf("No valid metrics found, falling back to random selection")
+		return providers[rand.Intn(len(providers))].Name
+	}
+
+	return ""
+}
