@@ -35,10 +35,10 @@ metadata:
         f:url: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-13T07:16:45Z"
+    time: "2026-02-13T09:35:45Z"
   name: AI-plugin-yellowbaby-1.0.0
   namespace: higress-system
-  resourceVersion: "3"
+  resourceVersion: "5"
 spec:
   defaultConfigDisable: true
   failStrategy: FAIL_OPEN
@@ -46,9 +46,11 @@ spec:
   - config:
       providers:
       - key: minimax_1
-        name: minimax-gpu-1
+        model: MiniMax-M2.1
+        name: minimax
       - key: qwen_1
-        name: qwen-gpu-1
+        model: qwen3-max-preview
+        name: qwen
       redis:
         service_name: redis-svc
         service_port: 6379

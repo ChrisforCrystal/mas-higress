@@ -3,17 +3,17 @@ kind: WasmPlugin
 metadata:
   annotations:
     higress.io/comment: PLEASE DO NOT EDIT DIRECTLY. This resource is managed by Higress.
-    higress.io/wasm-plugin-description: Provide unified OpenAI API compatible interface
-      to call different AI service providers.
+    higress.io/wasm-plugin-description: Implements the functionality of routing based
+      on the `model` parameter in the LLM protocol.
     higress.io/wasm-plugin-icon: https://img.alicdn.com/imgextra/i1/O1CN018iKKih1iVx287RltL_!!6000000004419-2-tps-42-42.png
-    higress.io/wasm-plugin-title: AI Proxy
-  creationTimestamp: "2026-02-13T07:14:18Z"
+    higress.io/wasm-plugin-title: AI Model Router
+  creationTimestamp: "2026-02-13T07:35:57Z"
   labels:
     higress.io/internal: "true"
     higress.io/resource-definer: higress
     higress.io/wasm-plugin-built-in: "true"
     higress.io/wasm-plugin-category: ai
-    higress.io/wasm-plugin-name: ai-proxy
+    higress.io/wasm-plugin-name: model-router
     higress.io/wasm-plugin-version: 1.0.0
   managedFields:
   - apiVersion: extensions.higress.io/v1alpha1
@@ -37,53 +37,24 @@ metadata:
       f:spec:
         f:defaultConfig:
           .: {}
-          f:providers: {}
+          f:modelToHeader: {}
         f:defaultConfigDisable: {}
         f:failStrategy: {}
-        f:matchRules: {}
+        f:phase: {}
         f:priority: {}
         f:url: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-13T07:32:55Z"
-  name: ai-proxy.internal
+    time: "2026-02-13T07:35:57Z"
+  name: model-router.internal
   namespace: higress-system
-  resourceVersion: "8"
+  resourceVersion: "1"
 spec:
   defaultConfig:
-    providers:
-    - apiTokens:
-      - sk-cp-bWgyVZc-g6oYib6m-Fct6u8pMU5aY5q4UEKmZeB8PaQ40x0WCT4U73roayrgbiryu3cezEPMGSSpst8bon7USN6ODz9DrGAJ7M-i37hSj3AVa8jlkupUVXw
-      failover:
-        enabled: false
-      id: minmax
-      retryOnFailure:
-        enabled: false
-      type: minimax
-    - apiTokens:
-      - sk-216ef44f260a494dae79fdd3f4b6c9f9
-      failover:
-        enabled: false
-      id: qianwen
-      qwenEnableCompatible: false
-      qwenEnableSearch: false
-      qwenFileIds: []
-      retryOnFailure:
-        enabled: false
-      type: qwen
+    modelToHeader: x-higress-llm-model
   defaultConfigDisable: false
   failStrategy: FAIL_OPEN
-  matchRules:
-  - config:
-      activeProviderId: minmax
-    configDisable: false
-    service:
-    - llm-minmax.internal.dns
-  - config:
-      activeProviderId: qianwen
-    configDisable: false
-    service:
-    - llm-qianwen.internal.dns
-  priority: 100
-  url: oci://higress-registry.cn-hangzhou.cr.aliyuncs.com/plugins/ai-proxy:2.0.0
+  phase: AUTHN
+  priority: 900
+  url: oci://higress-registry.cn-hangzhou.cr.aliyuncs.com/plugins/model-router:2.0.0
 status: {}

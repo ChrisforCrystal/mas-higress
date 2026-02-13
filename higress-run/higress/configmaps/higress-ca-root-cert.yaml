@@ -2,38 +2,38 @@ apiVersion: v1
 data:
   root-cert.pem: |
     -----BEGIN CERTIFICATE-----
-    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
+    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
-    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
+    MCAXDTI2MDIxMzA4NDQ1MVoYDzIxMjYwMTIwMDg0NDUxWjCBizELMAkGA1UEBhMC
     Q04xETAPBgNVBAgMCFNoYW5naGFpMREwDwYDVQQHDAhTaGFuZ2hhaTEQMA4GA1UE
     CgwHSGlncmVzczEQMA4GA1UECwwHR2F0ZXdheTEQMA4GA1UEAwwHUm9vdCBDQTEg
     MB4GCSqGSIb3DQEJARYRcm9vdGNhQGhpZ3Jlc3MuaW8wggIiMA0GCSqGSIb3DQEB
-    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
+    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
     -----END CERTIFICATE-----
 kind: ConfigMap
 metadata:
@@ -53,7 +53,7 @@ metadata:
           f:istio.io/config: {}
     manager: pilot-discovery
     operation: Update
-    time: "2026-02-13T06:39:36Z"
+    time: "2026-02-13T08:44:54Z"
   name: higress-ca-root-cert
   namespace: higress-system
-  resourceVersion: "39"
+  resourceVersion: "52"

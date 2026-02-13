@@ -9,7 +9,6 @@ metadata:
     higress.io/resource-definer: higress
   name: ai-route-minimax.internal
   namespace: higress-system
-  resourceVersion: "1"
 spec:
   ingressClassName: higress
   rules:

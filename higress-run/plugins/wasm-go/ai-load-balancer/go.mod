@@ -7,6 +7,7 @@ require (
 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20240226064518-b3dc4646a35a
 	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/resp v0.1.1
+	github.com/tidwall/sjson v1.2.5
 )
 
 require (

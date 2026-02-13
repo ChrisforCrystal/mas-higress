@@ -10,21 +10,16 @@ metadata:
         f:registries: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-13T07:14:18Z"
+    time: "2026-02-13T07:32:55Z"
   name: default
   namespace: higress-system
-  resourceVersion: "5"
+  resourceVersion: "8"
 spec:
   registries:
   - domain: 127.0.0.1:8001
     name: higress-console
     port: 80
     type: static
-  - domain: dashscope.aliyuncs.com
-    name: llm-aliyun.internal
-    port: 443
-    protocol: https
-    type: dns
   - domain: api.deepseek.com
     name: llm-deepseek.internal
     port: 443
@@ -116,6 +111,11 @@ spec:
     type: dns
   - domain: api.minimax.chat
     name: llm-minmax.internal
+    port: 443
+    protocol: https
+    type: dns
+  - domain: dashscope.aliyuncs.com
+    name: llm-qianwen.internal
     port: 443
     protocol: https
     type: dns

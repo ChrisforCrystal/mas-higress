@@ -3,37 +3,16 @@ kind: Ingress
 metadata:
   annotations:
     higress.io/comment: PLEASE DO NOT EDIT DIRECTLY. This resource is managed by Higress.
-    higress.io/destination: llm-minmax.internal.dns:443
+    higress.io/destination: |-
+      50% llm-minmax.internal.dns:443
+      50% llm-qianwen.internal.dns:443
     higress.io/ignore-path-case: "true"
-  creationTimestamp: "2026-02-13T07:14:40Z"
   labels:
     higress.io/domain_higress-default-domain: "true"
     higress.io/internal: "true"
     higress.io/resource-definer: higress
-  managedFields:
-  - apiVersion: networking.k8s.io/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:higress.io/comment: {}
-          f:higress.io/destination: {}
-          f:higress.io/ignore-path-case: {}
-        f:labels:
-          .: {}
-          f:higress.io/domain_higress-default-domain: {}
-          f:higress.io/internal: {}
-          f:higress.io/resource-definer: {}
-      f:spec:
-        f:ingressClassName: {}
-        f:rules: {}
-    manager: Kubernetes Java Client
-    operation: Update
-    time: "2026-02-13T07:14:40Z"
   name: ai-route-masgod.internal
   namespace: higress-system
-  resourceVersion: "1"
 spec:
   ingressClassName: higress
   rules:
@@ -46,5 +25,3 @@ spec:
             name: default
         path: /masgod
         pathType: Prefix
-status:
-  loadBalancer: {}

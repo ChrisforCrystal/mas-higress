@@ -3,15 +3,9 @@ kind: WasmPlugin
 metadata:
   name: ai-load-balancer
   namespace: higress-system
-  labels:
-    higress.io/resource-definer: higress
-    higress.io/wasm-plugin-built-in: "true"
-    higress.io/wasm-plugin-name: ai-load-balancer
-    higress.io/wasm-plugin-version: 1.0.0
 spec:
   priority: 200
-  phase: AUTHN
-  failStrategy: FAIL_OPEN
+  phase: UNSPECIFIED
   url: file:///data/wasmplugins/ai-load-balancer-go.wasm
   defaultConfig:
     redis:
@@ -19,10 +13,14 @@ spec:
       service_port: 6379
       timeout: 2000
     redis_key_prefix: "ai_metric:"
-    target_header: "x-selected-provider"
     providers:
-      - name: "minimax-gpu-1"
+      - name: "minmax"
         key: "minimax_1"
-      - name: "qwen-gpu-1"
+        model: "MiniMax-M2.1"
+        headers:
+          x-higress-llm-model: "MiniMax-M2.1"
+      - name: "qianwen"
         key: "qwen_1"
-  defaultConfigDisable: false
+        model: "qwen3-max-preview"
+        headers:
+          x-lb-dispatch: "qwen-gpu-1"

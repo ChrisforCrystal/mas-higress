@@ -1,9 +1,9 @@
 apiVersion: v1
 data:
-  data: '{"name":"masgod","domains":[],"pathPredicate":{"matchType":"PRE","matchValue":"/masgod","caseSensitive":false},"headerPredicates":[],"urlParamPredicates":[],"upstreams":[{"provider":"minmax","weight":100,"modelMapping":{}}],"modelPredicates":[],"authConfig":{"enabled":false,"allowedConsumers":[]},"fallbackConfig":{"enabled":false}}'
+  data: '{"name":"masgod","domains":[],"pathPredicate":{"matchType":"PRE","matchValue":"/masgod","caseSensitive":false},"headerPredicates":[],"urlParamPredicates":[],"upstreams":[{"provider":"minmax","weight":50,"modelMapping":{}},{"provider":"qianwen","weight":50,"modelMapping":{}}],"modelPredicates":[],"authConfig":{"enabled":false,"allowedConsumers":[]},"fallbackConfig":{"enabled":false}}'
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2026-02-13T07:14:40Z"
+  creationTimestamp: null
   labels:
     higress.io/config-map-type: ai-route
     higress.io/resource-definer: higress
@@ -21,7 +21,7 @@ metadata:
           f:higress.io/resource-definer: {}
     manager: Kubernetes Java Client
     operation: Update
-    time: "2026-02-13T07:14:40Z"
+    time: "2026-02-13T09:21:34Z"
   name: ai-route-masgod
   namespace: higress-system
-  resourceVersion: "1"
+  resourceVersion: "5"
